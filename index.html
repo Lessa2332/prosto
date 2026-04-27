@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат із Духом Чорного Моря | НУШ Дослідження</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #004e92, #000428);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent-color: #00d2ff;
+            --text-color: #ffffff;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+       .container {
+            width: 90%;
+            max-width: 600px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            margin: 20px 0;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+
+        #chat-window {
+            height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 15px;
+        }
+
+       .message {
+            max-width: 85%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
+
+       .bot {
+            background: rgba(0, 210, 255, 0.2);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+       .user {
+            background: rgba(255, 255, 255, 0.2);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+       .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        select, button {
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        select {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        button {
+            background: var(--accent-color);
+            color: #000;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            opacity: 0.7;
+            padding: 10px;
+            max-width: 80%;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scrollbar */
+        #chat-window::-webkit-scrollbar { width: 5px; }
+        #chat-window::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌊 Чат із Духом Чорного Моря</h1>
+    
+    <div id="chat-window">
+        <div class="message bot">Вітаю тебе, досліднику! Я — Дух Чорного Моря, що омиває береги твого міста Чорноморськ. Обери запитання, і я відкрию тобі свої таємниці.</div>
+    </div>
+
+    <div class="controls">
+        <select id="question-select">
+            <option value="" disabled selected>Обери запитання...</option>
+            <option value="1">Чому ти так пахнеш після шторму?</option>
+            <option value="2">Чому в Чорноморську такі піщані пляжі?</option>
+            <option value="3">Що стається з обривами біля Приморського парку?</option>
+            <option value="4">Чому Сухий лиман тепер став солоним?</option>
+            <option value="5">Чи можна зустріти в тобі справжню акулу?</option>
+            <option value="6">Звідки в нас взялися рожеві фламінго?</option>
+            <option value="7">Чи завжди ти було солоним морем?</option>
+            <option value="8">Що таке «Окуляри Кніповича» у твоїх водах?</option>
+            <option value="9">Хто в твоїх водах найнебезпечніший?</option>
+            <option value="10">Як ми, люди, можемо тобі допомогти?</option>
+        </select>
+        <button onclick="sendMessage()">Запитати</button>
+    </div>
+</div>
+
+<footer>
+    🛡️ <strong>Digital Safety 2026:</strong> Цей додаток не збирає персональні дані. Відповіді базуються на наукових фактах про екосистему Чорноморська. Відповідає стандартам COPPA та GDPR-K.
+</footer>
+
+<script>
+    const responses = {
+        "1": "Це мій нижній шар сірководню, який починається нижче 150 метрів, нагадує про себе. Там немає кисню, тому я зберігаю там таємниці давніх міст.",
+        "2": "Це результат моєї тисячолітньої праці! Мої хвилі та вітер поступово перетирають мушлі та гірські породи на дрібний золотистий пісок.",
+        "3": "Це абразія — я забираю берег собі. Через підземні води та хвилі земля сповзає. Щороку я можу забирати до 20-25 сантиметрів твого парку!",
+        "4": "У 1957 році люди прорили канал, і мої солоні води ринули в лиман. Тепер його солоність складає 14-16 проміле, і там живуть морські риби.",
+        "5": "Так, у мене живе акула Катран. Але не бійся — вона дуже сором'язлива, боїться людей і ніколи не підпливає до пляжів Чорноморська.",
+        "6": "Вони люблять наш Сухий лиман! Там мілка солона вода і багато особливого планктону, яким вони харчуються під час своїх мандрівок.",
+        "7": "Ні! 8000 років тому я було величезним прісноводним озером. Але потужний землетрус відкрив Босфор, і сюди прийшла солона вода океану.",
+        "8": "Це дві величезні морські течії, які за формою нагадують окуляри. Їх назвали на честь вченого Миколи Кніповича, який першим їх описав.",
+        "9": "Бережися Морського Дракончика! Це маленька рибка з отруйними колючками на плавцях. Вона ховається в піску, тож будь уважним.",
+        "10": "Не кидайте в мене пластик та хімікати. Я — цілісний природний комплекс, і все, що ви робите в місті, рано чи пізно потрапляє до моїх хвиль."
+    };
+
+    function sendMessage() {
+        const select = document.getElementById('question-select');
+        const chatWindow = document.getElementById('chat-window');
+        const qId = select.value;
+
+        if (!qId) return;
+
+        // User message
+        const userMsg = document.createElement('div');
+        userMsg.className = 'message user';
+        userMsg.innerText = select.options[select.selectedIndex].text;
+        chatWindow.appendChild(userMsg);
+
+        // Bot response (with a small delay for "AI thinking" effect)
+        setTimeout(() => {
+            const botMsg = document.createElement('div');
+            botMsg.className = 'message bot';
+            botMsg.innerText = responses[qId];
+            chatWindow.appendChild(botMsg);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }, 600);
+    }
+</script>
+
+</body>
+</html>
