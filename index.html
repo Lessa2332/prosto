@@ -3,148 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Еко-місія: Пульс Чорноморська | 6 клас</title>
+    <title>Симулятор ПРК: Пульс Чорноморська</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Permanent+Marker&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #000428;
             --accent: #00d2ff;
             --ai-glow: #00ff88;
-            --glass: rgba(255, 255, 255, 0.07);
+            --danger: #ff4b2b;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         body, html { margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: white; scroll-behavior: smooth; }
 
-        /* --- 1. Запуск системи (Loading) --- */
-        #loading-screen {
-            position: fixed; inset: 0; background: black; z-index: 2000;
-            display: flex; flex-direction: column; justify-content: center;
-            padding: 40px; font-family: 'Share Tech Mono', monospace; color: var(--ai-glow);
+        .hub-container { max-width: 1100px; margin: 0 auto; padding: 20px; animation: fadeIn 1s ease; }
+
+        header { text-align: center; border-bottom: 2px solid var(--ai-glow); padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { font-family: 'Permanent Marker', cursive; color: var(--ai-glow); margin: 0; }
+
+        /* --- СИМУЛЯТОР ЗВ'ЯЗКІВ --- */
+        .system-box {
+            display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-bottom: 40px;
         }
-        .term-line { border-right: 2px solid var(--ai-glow); white-space: nowrap; overflow: hidden; width: 0; margin-bottom: 10px; }
 
-        /* --- Контейнер Хабу --- */
-        .hub-container { display: none; max-width: 1000px; margin: 0 auto; padding: 20px; animation: fadeIn 1s ease; }
-
-        header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid var(--accent); padding-bottom: 20px; }
-        h1 { font-family: 'Permanent Marker', cursive; color: var(--accent); font-size: 2.5rem; }
-
-        /* --- 2. Дослідницька розвідка (Map) --- */
-        .map-box {
-            position: relative; height: 400px; background: url('https://images.unsplash.com/photo-1506466010722-395aa2bef877?auto=format&fit=crop&w=1200&q=80') center/cover;
-            border-radius: 20px; border: 2px solid var(--accent); overflow: hidden; margin-bottom: 30px;
+        .map-visual {
+            position: relative; height: 450px; background: url('https://images.unsplash.com/photo-1518113259039-383679808603?auto=format&fit=crop&w=1200&q=80') center/cover;
+            border-radius: 20px; border: 2px solid var(--accent); overflow: hidden;
         }
-        .map-overlay { position: absolute; inset: 0; background: rgba(0, 31, 63, 0.5); backdrop-filter: blur(2px); }
+
+        .system-lines {
+            position: absolute; inset: 0; pointer-events: none;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.6));
+        }
+
         .poi {
-            position: absolute; width: 30px; height: 30px; background: var(--ai-glow); border-radius: 50%;
-            cursor: pointer; box-shadow: 0 0 20px var(--ai-glow); transition: 0.3s; z-index: 10;
+            position: absolute; width: 40px; height: 40px; background: var(--ai-glow); border-radius: 50%;
+            cursor: pointer; box-shadow: 0 0 25px var(--ai-glow); transition: 0.3s; z-index: 10;
+            display: flex; align-items: center; justify-content: center; font-weight: bold; color: black;
         }
-        .poi:hover { transform: scale(1.3); }
-        .poi::after { content: attr(data-label); position: absolute; top: 35px; left: 50%; transform: translateX(-50%); background: #000; padding: 5px 10px; border-radius: 5px; font-size: 12px; white-space: nowrap; }
 
-        /* --- 3. Інтерв’ю з Духом (Chat) --- */
-        .chat-section { background: var(--glass); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px; }
-        #chat-window { height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px; }
-        .msg { padding: 15px; border-radius: 15px; max-width: 80%; line-height: 1.4; }
+        /* --- КНОПКИ КАТАСТРОФ --- */
+        .control-panel {
+            background: var(--glass); padding: 25px; border-radius: 20px; border: 1px solid var(--accent);
+        }
+        .hazard-btn {
+            background: transparent; border: 1px solid var(--danger); color: var(--danger);
+            padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 12px; cursor: pointer;
+            font-weight: bold; transition: 0.3s;
+        }
+        .hazard-btn:hover { background: var(--danger); color: white; box-shadow: 0 0 20px var(--danger); }
+
+        /* --- ОПИС КОМПЛЕКСУ --- */
+        .complex-definition {
+            background: linear-gradient(90deg, #001f3f, #00d2ff33);
+            padding: 20px; border-radius: 15px; margin: 30px 0; border-left: 5px solid var(--ai-glow);
+        }
+
+        /* --- ЧАТ (Дух Моря) --- */
+        .chat-section { background: rgba(0,0,0,0.5); border-radius: 20px; padding: 25px; border: 1px solid var(--glass); }
+        #chat-window { height: 250px; overflow-y: auto; margin-bottom: 20px; border-bottom: 1px solid var(--glass); }
+        .msg { padding: 12px 18px; border-radius: 15px; margin-bottom: 10px; font-size: 0.95rem; line-height: 1.5; }
         .bot-msg { background: rgba(0, 255, 136, 0.1); border-left: 4px solid var(--ai-glow); align-self: flex-start; }
         .user-msg { background: rgba(0, 210, 255, 0.1); border-right: 4px solid var(--accent); align-self: flex-end; }
 
-        /* --- 6. Рефлексія 3-2-1 --- */
-        .reflection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .sticker { padding: 20px; border-radius: 5px; color: #333; min-height: 200px; box-shadow: 8px 8px 0 rgba(0,0,0,0.2); }
-        .s-yellow { background: #fff3a3; transform: rotate(-1deg); }
-        .s-blue { background: #a3d2ff; transform: rotate(1.5deg); }
-        .s-pink { background: #ffb3d9; transform: rotate(-0.5deg); }
-        .sticker h3 { font-family: 'Permanent Marker', cursive; margin-top: 0; }
-
-        .btn { background: var(--ai-glow); color: #000; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        .reflection-321 {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 40px;
+        }
+        .sticker { padding: 20px; border-radius: 10px; color: #111; min-height: 180px; }
+        .yellow { background: #fff3a3; } .blue { background: #a3d2ff; } .pink { background: #ffb3d9; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="loading-screen">
-    <div class="term-line" id="l1"></div>
-    <div class="term-line" id="l2"></div>
-    <div class="term-line" id="l3"></div>
-</div>
-
-<div class="hub-container" id="app">
+<div class="hub-container">
     <header>
-        <h1>ПУЛЬС ЧОРНОМОРСЬКА 2026</h1>
-        <p>Місія: розгадати таємниці природного комплексу</p>
+        <h1>ЕКО-МОНІТОР "ЧОРНОМОР-2026"</h1>
+        <p>Тема: Взаємозв'язки в ПРК (Природно-рекреаційному комплексі)</p>
     </header>
 
-    <section class="map-box">
-        <div class="map-overlay"></div>
-        <div class="poi" style="top: 30%; left: 25%;" data-label="Група ГІДРО: Лиман" onclick="triggerInfo('гідро')"></div>
-        <div class="poi" style="top: 60%; left: 50%;" data-label="Група ГЕО: Парк" onclick="triggerInfo('гео')"></div>
-        <div class="poi" style="top: 45%; left: 75%;" data-label="Група БІО: Море" onclick="triggerInfo('біо')"></div>
-    </section>
+    <div class="complex-definition">
+        <strong>💡 СУТЬ КОМПЛЕКСУ:</strong> Це не просто набір об'єктів. Це система, де <b>Літосфера</b> (ґрунт), <b>Гідросфера</b> (вода), <b>Атмосфера</b> (повітря) та <b>Біосфера</b> (життя) тримаються одне за одного. Зміниш одне — зміниться ВСЕ.
+    </div>
 
-    <section class="chat-section">
+    <div class="system-box">
+        <div class="map-visual">
+            <div class="system-lines"></div>
+            <div class="poi" style="top: 25%; left: 20%;" data-label="ЗВ'ЯЗОК: Канал - Лиман" onclick="showLogic('hydro')">💧</div>
+            <div class="poi" style="top: 70%; left: 45%;" data-label="ЗВ'ЯЗОК: Схили - Море" onclick="showLogic('geo')">🪨</div>
+            <div class="poi" style="top: 40%; left: 80%;" data-label="ЗВ'ЯЗОК: Вітер - Здоров'я" onclick="showLogic('atmo')">🌬️</div>
+        </div>
+
+        <div class="control-panel">
+            <h3>⚠️ Тест системи на міцність</h3>
+            <p><small>Спробуй зруйнувати один компонент і подивись на ланцюгову реакцію:</small></p>
+            <button class="hazard-btn" onclick="simulate('cat1')">Засипати канал (Гідросфера ⬇️)</button>
+            <button class="hazard-btn" onclick="simulate('cat2')">Вирубати акації (Біосфера ⬇️)</button>
+            <button class="hazard-btn" onclick="simulate('cat3')">Забудувати пляжі (Антропоген ⬆️)</button>
+            
+            <div id="sim-result" style="margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; font-size: 0.9rem; color: var(--ai-glow);">
+                Чекаю команду на запуск симуляції...
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-section">
+        <h3>💬 Прямий зв'язок: Дух Чорного Моря</h3>
         <div id="chat-window">
-            <div class="msg bot-msg"><b>Чорномор-2026:</b> Систему активовано. Виберіть зону на карті для аналізу або запитайте Духа Моря.</div>
+            <div class="msg bot-msg">Я — не просто чаша з водою. Я — частина величезного механізму. Спитай мене, як я пов'язаний з усім навколо.</div>
         </div>
-        <div style="margin-top: 15px; display: flex; gap: 10px;">
-            <select id="spirit-q" style="flex: 1; padding: 10px; border-radius: 5px; background: #001f3f; color: white;">
-                <option value="" disabled selected>Запитати Духа Моря...</option>
-                <option value="smell">Чому ти так пахнеш після шторму?</option>
-                <option value="erosion">Чому берег у парку зникає?</option>
-                <option value="help">Як ми можемо тобі допомогти?</option>
+        <div style="display: flex; gap: 10px;">
+            <select id="q-select" style="flex: 1; padding: 12px; border-radius: 8px; background: #001f3f; color: white; border: 1px solid var(--accent);">
+                <option value="" disabled selected>Вибери глибоке питання...</option>
+                <option value="complex">Чому ти називаєшся "комплексом"?</option>
+                <option value="hydrogen">Звідки в тобі сірководень (зв'язок з глибиною)?</option>
+                <option value="wind">Як степовий вітер впливає на твою воду?</option>
+                <option value="future">Що станеться з парком через 50 років?</option>
             </select>
-            <button class="btn" onclick="askSpirit()" style="width: auto; margin: 0; padding: 0 20px;">Запитати 🌊</button>
+            <button onclick="ask()" style="background: var(--ai-glow); border: none; padding: 0 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">ДІЗНАТИСЬ</button>
         </div>
-    </section>
+    </div>
 
-    <h2 style="text-align:center;">📝 Цифровий звіт 3-2-1</h2>
-    <div class="reflection-grid">
-        <div class="sticker s-yellow">
-            <h3>3 Факти</h3>
-            <ul id="facts-list">
-                <li>Швидкість абразії: 20-25 см/100 р.</li>
-                <li>Є підводна річка</li>
-                <li>Катран — єдина акула</li>
-            </ul>
-        </div>
-        <div class="sticker s-blue">
-            <h3>2 Цікавинки</h3>
-            <ul>
-                <li>Фламінго в лимані — реальність</li>
-                <li>Море було прісним озером</li>
-            </ul>
-        </div>
-        <div class="sticker s-pink">
-            <h3>1 Питання</h3>
-            <p>Як ШІ допоможе зупинити ерозію берегів у нашому парку?</p>
-        </div>
+    <div class="reflection-321">
+        <div class="sticker yellow"><h3>3 Зв'язки</h3><p><small id="f1">1. Канал -> Солоність -> Фламінго<br>2. Хвилі -> Глина -> Зсуви<br>3. Бризи -> Степ -> Клімат</small></p></div>
+        <div class="sticker blue"><h3>2 Еко-проблеми</h3><p><small>1. Абразія берегів<br>2. Забруднення портом</small></p></div>
+        <div class="sticker pink"><h3>1 Рішення</h3><p><small>Висадка дерев для закріплення літосфери.</small></p></div>
     </div>
 </div>
 
 <script>
     const chat = document.getElementById('chat-window');
-
-    function typeLine(id, text, delay, cb) {
-        let i = 0; const el = document.getElementById(id);
-        const t = setInterval(() => {
-            if (i < text.length) { el.innerHTML += text[i]; i++; }
-            else { clearInterval(t); if(cb) cb(); }
-        }, 30);
-    }
-
-    window.onload = () => {
-        typeLine("l1", "> Встановлення зв'язку з супутником...", 0, () => {
-            typeLine("l2", "> Отримання даних по Сухому лиману...", 0, () => {
-                typeLine("l3", "> Доступ дозволено. Вітаю, Чорноморськ!", 0, () => {
-                    setTimeout(() => {
-                        document.getElementById('loading-screen').style.display = 'none';
-                        document.getElementById('app').style.display = 'block';
-                    }, 1000);
-                });
-            });
-        });
-    };
+    const simRes = document.getElementById('sim-result');
 
     function addMsg(role, text) {
         const d = document.createElement('div');
@@ -154,27 +144,39 @@
         chat.scrollTop = chat.scrollHeight;
     }
 
-    function triggerInfo(group) {
-        const data = {
-            'гідро': '<b>Група ГІДРО:</b> Канал 1957 року змінив усе. Тепер солоність лиману 14-16‰. Це ланцюгова реакція!',
-            'біо': '<b>Група БІО:</b> Фламінго обирають нас через мілководдя та їжу. Біосфера підлаштувалась під нову гідросферу!',
-            'гео': '<b>Група ГЕО:</b> Абразія — це механічна робота хвиль. Літосфера поступається місцем морю.'
+    function showLogic(type) {
+        const logics = {
+            'hydro': '<b>ГІДРО + БІО:</b> Канал з морем зробив лиман солоним. Це дозволило розмножитись рачкам артемія, за якими прилетіли <b>фламінго</b>. Зв’язок: Вода -> Їжа -> Птахи.',
+            'geo': '<b>ЛІТО + ГІДРО:</b> Пухкі глини схилів (Літосфера) підмиваються морем (Гідросфера). Результат: Берег "тікає" на 20 см щороку.',
+            'atmo': '<b>АТМО + БІО:</b> Морські бризи вдень охолоджують місто, а вночі степовий вітер приносить тепло. Це ідеальний мікроклімат для здоров’я людей.'
         };
-        addMsg('user', `Аналіз зони: ${group.toUpperCase()}`);
-        setTimeout(() => addMsg('bot', data[group]), 600);
+        addMsg('bot', logics[type]);
     }
 
-    function askSpirit() {
-        const q = document.getElementById('spirit-q').value;
-        const res = {
-            'smell': '<b>Дух Моря:</b> Це сірководень з глибини 150 метрів. Там немає кисню, лише таємниці стародавніх міст...',
-            'erosion': '<b>Дух Моря:</b> Я просто забираю те, що належить мені. Коли люди нищать рослинність на схилах, берег стає беззахисним.',
-            'help': '<b>Дух Моря:</b> Не засмічуйте ливнівки. Все, що потрапляє в них у місті, стає моєю болісною раною.'
+    function simulate(cat) {
+        simRes.style.color = '#ff4b2b';
+        if(cat === 'cat1') {
+            simRes.innerHTML = "⚠️ <b>РЕАКЦІЯ:</b> Лиман прісніє -> Рачки гинуть -> Фламінго зникають. Система зруйнована.";
+        } else if(cat === 'cat2') {
+            simRes.innerHTML = "⚠️ <b>РЕАКЦІЯ:</b> Коріння не тримає ґрунт -> Вода просочується глибше -> Масштабний зсув у морі. Парк знищено.";
+        } else {
+            simRes.innerHTML = "⚠️ <b>РЕАКЦІЯ:</b> Бетон закриває доступ повітря -> Порушується теплообмін -> Температура в місті влітку зростає на 3-5 градусів.";
+        }
+    }
+
+    function ask() {
+        const val = document.getElementById('q-select').value;
+        const answers = {
+            'complex': '<b>Дух:</b> Комплекс — це як твій організм. Мої хвилі — це кров, моє дно — скелет, а вітер — подих. Якщо в тебе болить нога, страждає все тіло. Так і в природі.',
+            'hydrogen': '<b>Дух:</b> На глибині 150м немає кисню. Бактерії (Біосфера) переробляють залишки життя і виділяють сірководень. Це доказ зв’язку глибини та життя.',
+            'wind': '<b>Дух:</b> Вітер перемішує мої шари. Без нього я б "задихнулося". Повітря дає мені кисень, а я віддаю йому вологу.',
+            'future': '<b>Дух:</b> Якщо літосфера не буде закріплена корінням рослин, я просто поглину цей парк. Природа завжди шукає рівновагу.'
         };
-        if(!q) return;
-        addMsg('user', document.querySelector(`#spirit-q option[value="${q}"]`).text);
-        setTimeout(() => addMsg('bot', res[q]), 800);
+        if(!val) return;
+        addMsg('user', document.querySelector(`#q-select option[value="${val}"]`).text);
+        setTimeout(() => addMsg('bot', answers[val]), 600);
     }
 </script>
+
 </body>
 </html>
