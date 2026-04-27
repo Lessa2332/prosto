@@ -3,198 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Чат із Духом Чорного Моря | НУШ Дослідження</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <title>Еко-патруль Чорноморська | НУШ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Permanent+Marker&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #004e92, #000428);
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
+            --bg-gradient: linear-gradient(135deg, #001f3f, #000428);
             --accent-color: #00d2ff;
-            --text-color: #ffffff;
+            --ai-color: #00ff88;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --sticker-yellow: #fff3a3;
+            --sticker-blue: #a3d2ff;
+            --sticker-pink: #ffb3d9;
         }
 
-        body {
+        body, html {
+            margin: 0;
+            padding: 0;
             font-family: 'Montserrat', sans-serif;
             background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            align-items: center;
-            justify-content: center;
+            color: white;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
-       .container {
-            width: 90%;
-            max-width: 600px;
+        /* --- Екран завантаження --- */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: black;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--ai-color);
+        }
+
+        .terminal-text {
+            border-right: 2px solid var(--ai-color);
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+            margin-bottom: 10px;
+        }
+
+        /* --- Хаб та Карта --- */
+        .hub-container {
+            display: none;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        .map-section {
+            position: relative;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            height: 350px;
+            margin-bottom: 30px;
+            border: 2px solid var(--accent-color);
+            overflow: hidden;
+            background-image: url('https://images.unsplash.com/photo-1520110120287-c958d87ad735?auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .map-overlay { position: absolute; inset: 0; background: rgba(0, 78, 146, 0.4); backdrop-filter: blur(2px); }
+
+        .location-point {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--accent-color);
+            transition: 0.3s;
+            z-index: 5;
+        }
+
+        .location-point::after {
+            content: attr(data-label);
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: black;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .loc-liman { top: 30%; left: 30%; }
+        .loc-park { top: 65%; left: 55%; }
+        .loc-port { top: 45%; left: 75%; }
+
+        /* --- Чат --- */
+        .chat-container {
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            margin: 20px 0;
+            margin-bottom: 40px;
         }
 
-        h1 {
-            text-align: center;
-            font-size: 1.5rem;
-            color: var(--accent-color);
-            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
-        }
+        #chat-window { height: 300px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; }
 
-        #chat-window {
-            height: 300px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 10px;
-            border-bottom: 1px solid var(--glass-border);
-            margin-bottom: 15px;
-        }
-
-       .message {
-            max-width: 85%;
-            padding: 10px 15px;
-            border-radius: 15px;
+        .msg {
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            max-width: 80%;
             font-size: 0.95rem;
-            line-height: 1.4;
-            animation: fadeIn 0.3s ease;
+            animation: slideIn 0.3s ease;
         }
 
-       .bot {
-            background: rgba(0, 210, 255, 0.2);
-            align-self: flex-start;
-            border-bottom-left-radius: 2px;
-        }
+        .ai-msg { background: rgba(0, 255, 136, 0.1); border-left: 4px solid var(--ai-color); align-self: flex-start; }
+        .spirit-msg { background: rgba(0, 210, 255, 0.1); border-left: 4px solid var(--accent-color); align-self: flex-start; }
+        .user-msg { background: rgba(255, 255, 255, 0.1); align-self: flex-end; }
 
-       .user {
-            background: rgba(255, 255, 255, 0.2);
-            align-self: flex-end;
-            border-bottom-right-radius: 2px;
+        /* --- Стікери --- */
+        #notes-section { display: none; margin-top: 40px; }
+        .stickers-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        
+        .sticker {
+            padding: 20px;
+            min-height: 220px;
+            color: #333;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+            transform: rotate(-1deg);
+            transition: 0.3s;
         }
+        .sticker:nth-child(even) { transform: rotate(2deg); }
+        .sticker h3 { font-family: 'Permanent Marker', cursive; margin-top: 0; border-bottom: 1px solid rgba(0,0,0,0.1); }
+        .bg-yellow { background: var(--sticker-yellow); }
+        .bg-blue { background: var(--sticker-blue); }
+        .bg-pink { background: var(--sticker-pink); }
 
-       .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        select, button {
+        button {
             padding: 12px;
             border-radius: 10px;
             border: none;
-            font-family: inherit;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        select {
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-        }
-
-        button {
             background: var(--accent-color);
             color: #000;
             font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
         }
+        button:hover { transform: scale(1.02); opacity: 0.9; }
 
-        button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 15px var(--accent-color);
-        }
-
-        footer {
-            font-size: 0.7rem;
-            text-align: center;
-            opacity: 0.7;
-            padding: 10px;
-            max-width: 80%;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Scrollbar */
-        #chat-window::-webkit-scrollbar { width: 5px; }
-        #chat-window::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🌊 Чат із Духом Чорного Моря</h1>
-    
-    <div id="chat-window">
-        <div class="message bot">Вітаю тебе, досліднику! Я — Дух Чорного Моря, що омиває береги твого міста Чорноморськ. Обери запитання, і я відкрию тобі свої таємниці.</div>
+<div id="loading-screen">
+    <div class="terminal-text" id="term1"></div>
+    <div class="terminal-text" id="term2"></div>
+    <div class="terminal-text" id="term3"></div>
+</div>
+
+<div class="hub-container" id="main-hub">
+    <header style="text-align: center;">
+        <h1>📍 Еко-моніторинг Чорноморська</h1>
+    </header>
+
+    <div class="map-section">
+        <div class="map-overlay"></div>
+        <div class="location-point loc-liman" data-label="Сухий лиман" onclick="addMessage('ai', '📡 Аналіз лиману: солоність підвищена до 16‰.')"></div>
+        <div class="location-point loc-park" data-label="Приморський парк" onclick="addMessage('ai', '📡 Дані парку: зафіксовано активність берегової ерозії.')"></div>
+        <div class="location-point loc-port" data-label="Порт" onclick="addMessage('ai', '📡 Стан порту: екологічні фільтри працюють.')"></div>
     </div>
 
-    <div class="controls">
-        <select id="question-select">
-            <option value="" disabled selected>Обери запитання...</option>
-            <option value="1">Чому ти так пахнеш після шторму?</option>
-            <option value="2">Чому в Чорноморську такі піщані пляжі?</option>
-            <option value="3">Що стається з обривами біля Приморського парку?</option>
-            <option value="4">Чому Сухий лиман тепер став солоним?</option>
-            <option value="5">Чи можна зустріти в тобі справжню акулу?</option>
-            <option value="6">Звідки в нас взялися рожеві фламінго?</option>
-            <option value="7">Чи завжди ти було солоним морем?</option>
-            <option value="8">Що таке «Окуляри Кніповича» у твоїх водах?</option>
-            <option value="9">Хто в твоїх водах найнебезпечніший?</option>
-            <option value="10">Як ми, люди, можемо тобі допомогти?</option>
-        </select>
-        <button onclick="sendMessage()">Запитати</button>
+    <div class="chat-container">
+        <div id="chat-window"></div>
+        
+        <div id="investigation-zone">
+            <button onclick="startInvestigation()" style="background: var(--ai-color); width: 100%;">Почати розслідування 🔍</button>
+        </div>
+
+        <div id="spirit-controls" style="display: none;">
+            <select id="question-select" style="width: 100%; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                <option value="" disabled selected>Оберіть запитання до Духа Моря...</option>
+                <option value="1">Чому ти так пахнеш після шторму?</option>
+                <option value="3">Що з обривами біля Приморського парку?</option>
+                <option value="4">Чому Сухий лиман став солоним?</option>
+                <option value="5">Чи можна зустріти акулу Катран?</option>
+                <option value="10">Як ми можемо тобі допомогти?</option>
+            </select>
+            <button onclick="askSpirit()" style="width: 100%;">Запитати 🌊</button>
+            <button onclick="showNotes()" style="background: #fff; margin-top: 10px; width: 100%;">Завершити та зробити нотатки 📝</button>
+        </div>
+    </div>
+
+    <div id="notes-section">
+        <h2 style="text-align: center;">Мій екологічний звіт</h2>
+        <div class="stickers-board">
+            <div class="sticker bg-yellow">
+                <h3>3 Факти</h3>
+                <ul>
+                    <li>Ерозія: 20-25 см за 100 років</li>
+                    <li>Є підводна річка</li>
+                    <li>Катран — єдина акула</li>
+                </ul>
+            </div>
+            <div class="sticker bg-blue">
+                <h3>2 Цікавинки</h3>
+                <ul>
+                    <li>Фламінго — це реальність!</li>
+                    <li>Море було прісним озером</li>
+                </ul>
+            </div>
+            <div class="sticker bg-pink">
+                <h3>1 Питання</h3>
+                <p>Як ШІ може допомогти зупинити ерозію берегів у нашому парку?</p>
+            </div>
+        </div>
+        <p style="text-align:center; margin-top:30px; opacity:0.6;">Скануй QR у репозиторії для перегляду в AR</p>
     </div>
 </div>
 
-<footer>
-    🛡️ <strong>Digital Safety 2026:</strong> Цей додаток не збирає персональні дані. Відповіді базуються на наукових фактах про екосистему Чорноморська. Відповідає стандартам COPPA та GDPR-K.
-</footer>
-
 <script>
-    const responses = {
-        "1": "Це мій нижній шар сірководню, який починається нижче 150 метрів, нагадує про себе. Там немає кисню, тому я зберігаю там таємниці давніх міст.",
-        "2": "Це результат моєї тисячолітньої праці! Мої хвилі та вітер поступово перетирають мушлі та гірські породи на дрібний золотистий пісок.",
-        "3": "Це абразія — я забираю берег собі. Через підземні води та хвилі земля сповзає. Щороку я можу забирати до 20-25 сантиметрів твого парку!",
-        "4": "У 1957 році люди прорили канал, і мої солоні води ринули в лиман. Тепер його солоність складає 14-16 проміле, і там живуть морські риби.",
-        "5": "Так, у мене живе акула Катран. Але не бійся — вона дуже сором'язлива, боїться людей і ніколи не підпливає до пляжів Чорноморська.",
-        "6": "Вони люблять наш Сухий лиман! Там мілка солона вода і багато особливого планктону, яким вони харчуються під час своїх мандрівок.",
-        "7": "Ні! 8000 років тому я було величезним прісноводним озером. Але потужний землетрус відкрив Босфор, і сюди прийшла солона вода океану.",
-        "8": "Це дві величезні морські течії, які за формою нагадують окуляри. Їх назвали на честь вченого Миколи Кніповича, який першим їх описав.",
-        "9": "Бережися Морського Дракончика! Це маленька рибка з отруйними колючками на плавцях. Вона ховається в піску, тож будь уважним.",
-        "10": "Не кидайте в мене пластик та хімікати. Я — цілісний природний комплекс, і все, що ви робите в місті, рано чи пізно потрапляє до моїх хвиль."
+    const chatWindow = document.getElementById('chat-window');
+
+    function typeWriter(id, text, speed, callback) {
+        let i = 0;
+        const el = document.getElementById(id);
+        function type() {
+            if (i < text.length) { el.innerHTML += text.charAt(i); i++; setTimeout(type, speed); }
+            else if (callback) callback();
+        }
+        type();
+    }
+
+    window.onload = () => {
+        typeWriter("term1", "> Ініціалізація еко-патруля...", 30, () => {
+            typeWriter("term2", "> Перевірка даних Чорноморська...", 30, () => {
+                typeWriter("term3", "> Доступ дозволено. Система онлайн.", 30, () => {
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').style.display = 'none';
+                        document.getElementById('main-hub').style.display = 'block';
+                        addMessage("ai", "Привіт! Я — бот-еколог. Я зафіксував зміну кольору води в Сухому лимані. Готові до розслідування?");
+                    }, 1000);
+                });
+            });
+        });
     };
 
-    function sendMessage() {
-        const select = document.getElementById('question-select');
-        const chatWindow = document.getElementById('chat-window');
-        const qId = select.value;
+    function addMessage(type, text) {
+        const msg = document.createElement('div');
+        msg.className = `msg ${type}-msg`;
+        msg.innerText = text;
+        chatWindow.appendChild(msg);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
 
-        if (!qId) return;
-
-        // User message
-        const userMsg = document.createElement('div');
-        userMsg.className = 'message user';
-        userMsg.innerText = select.options[select.selectedIndex].text;
-        chatWindow.appendChild(userMsg);
-
-        // Bot response (with a small delay for "AI thinking" effect)
+    function startInvestigation() {
+        addMessage("user", "Я готовий до розслідування!");
+        document.getElementById('investigation-zone').style.display = 'none';
         setTimeout(() => {
-            const botMsg = document.createElement('div');
-            botMsg.className = 'message bot';
-            botMsg.innerText = responses[qId];
-            chatWindow.appendChild(botMsg);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }, 600);
+            addMessage("ai", "Щоб зрозуміти море, треба спитати самого Духа Чорного Моря. Викликаю зв'язок...");
+            document.getElementById('spirit-controls').style.display = 'block';
+        }, 800);
+    }
+
+    const responses = {
+        "1": "🌊 Дух: Це сірководень з глибини 150 метрів підіймається вгору.",
+        "3": "🌊 Дух: Це абразія. Я забираю берег собі через підземні води та хвилі.",
+        "4": "🌊 Дух: У 1957 році люди прорили канал, і моя сіль наповнила лиман.",
+        "5": "🌊 Дух: Так, Катран живе у нас. Вона маленька і дуже боїться людей.",
+        "10": "🌊 Дух: Не кидайте пластик у ливнівки — усе це опиниться в моїх хвилях."
+    };
+
+    function askSpirit() {
+        const select = document.getElementById('question-select');
+        if (!select.value) return;
+        addMessage("user", select.options[select.selectedIndex].text);
+        setTimeout(() => addMessage("spirit", responses[select.value]), 800);
+    }
+
+    function showNotes() {
+        document.getElementById('notes-section').style.display = 'block';
+        window.location.hash = "notes-section";
     }
 </script>
 
