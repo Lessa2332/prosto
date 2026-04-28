@@ -15,7 +15,6 @@
             --glass: rgba(255, 255, 255, 0.08);
         }
 
-        /* Адаптивність для мобільних */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { 
             margin: 0; padding: 0; 
@@ -24,6 +23,7 @@
             color: white; 
             overflow-x: hidden;
             line-height: 1.4;
+            scroll-behavior: smooth;
         }
 
         .hub-container { width: 100%; max-width: 600px; margin: 0 auto; padding: 15px; }
@@ -35,7 +35,6 @@
         }
         h1 { font-family: 'Permanent Marker', cursive; color: var(--ai-glow); font-size: 1.8rem; margin: 0; }
 
-        /* QR-блок */
         .qr-access-box {
             background: var(--glass);
             border: 2px solid var(--ai-glow);
@@ -46,9 +45,8 @@
         }
         .qr-access-box img { width: 140px; height: 140px; border-radius: 10px; background: white; padding: 5px; }
 
-        /* Поетапність (приховані кроки) */
         .lesson-step {
-            display: none; /* Спочатку ховаємо всі кроки */
+            display: none;
             animation: slideUp 0.5s ease-out forwards;
             background: var(--glass);
             padding: 20px;
@@ -69,20 +67,28 @@
             margin-bottom: 10px;
         }
 
-        /* Кнопки переходу */
+        .theory-block {
+            background: rgba(0, 210, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--accent);
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+
         .next-btn {
             background: var(--ai-glow);
             color: black;
             border: none;
-            padding: 12px 20px;
+            padding: 15px 20px;
             border-radius: 10px;
             font-weight: bold;
             width: 100%;
             margin-top: 15px;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 255, 136, 0.3);
         }
 
-        /* Мапа та симулятор (Адаптовано під палець) */
         .map-visual {
             position: relative; height: 250px; 
             background: url('https://images.unsplash.com/photo-1518113259039-383679808603?auto=format&fit=crop&w=600&q=80') center/cover;
@@ -99,7 +105,6 @@
             padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 8px; font-size: 0.9rem;
         }
 
-        /* Гра */
         .game-card {
             background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; border: 2px solid var(--game-color);
         }
@@ -126,58 +131,73 @@
 
     <section id="step1" class="lesson-step step-visible">
         <div class="step-tag">1. ТЕОРІЯ</div>
-        <h2>Закон Природи</h2>
-        <p>Знайди в тексті 4 оболонки: <b>Літосфера, Гідросфера, Атмосфера, Біосфера</b>.</p>
-        <p><em>Завдання: Запиши їх назви у зошит.</em></p>
-        <button class="next-btn" onclick="nextStep(2)">Я ВИКОНАВ! ВІДКРИТИ МАПУ ➔</button>
+        <h2>Що таке ПК та ПРК?</h2>
+        
+        <div class="theory-block">
+            <strong>Природний комплекс (ПК)</strong> — це поєднання компонентів природи (вода, повітря, ґрунт, тварини), які діють як один механізм.
+        </div>
+        
+        <div class="theory-block" style="border-color: var(--ai-glow);">
+            <strong>Природно-ресурсний комплекс (ПРК)</strong> — це коли ми, люди, використовуємо цей механізм для життя (порти, пляжі, парки).
+        </div>
+
+        <p>Знайди 4 оболонки: <b>Літосфера</b> (скелі), <b>Гідросфера</b> (море), <b>Атмосфера</b> (повітря), <b>Біосфера</b> (все живе).</p>
+        <p><em>✍️ Завдання: Впиши в зошит одну фразу — що станеться з ПРК Чорноморська, якщо море зникне?</em></p>
+        
+        <button class="next-btn" onclick="nextStep(2)">Я РОЗІБРАВСЯ! ВІДКРИТИ МАПУ ➔</button>
     </section>
 
     <section id="step2" class="lesson-step">
         <div class="step-tag">2. ДОСЛІДЖЕННЯ</div>
-        <h2>Жива мапа</h2>
+        <h2>Жива мапа зв'язків</h2>
         <div class="map-visual">
-            <div class="poi" style="top: 20%; left: 15%;" onclick="alert('💧 Море дає воду для життя')">💧</div>
-            <div class="poi" style="top: 60%; left: 40%;" onclick="alert('🪨 Схили тримають берег')">🪨</div>
-            <div class="poi" style="top: 30%; left: 70%;" onclick="alert('🌬️ Вітер приносить прохолоду')">🌬️</div>
+            <div class="poi" style="top: 20%; left: 15%;" onclick="alert('💧 Гідросфера: Море дарує нам вологу та сіль.')">💧</div>
+            <div class="poi" style="top: 60%; left: 40%;" onclick="alert('🪨 Літосфера: Наші глинисті схили тримають все місто.')">🪨</div>
+            <div class="poi" style="top: 30%; left: 70%;" onclick="alert('🌬️ Атмосфера: Морський бриз очищує повітря.')">🌬️</div>
         </div>
-        <p>Натискай кнопки катастроф:</p>
-        <button class="hazard-btn" onclick="showSim('Зсув! Парк знищено.')">🪓 Вирубати акації</button>
-        <button class="hazard-btn" onclick="showSim('Спека! Дихати важко.')">🏗️ Забудувати пляж</button>
-        <div id="sim-info" style="color: var(--ai-glow); font-size: 0.9rem; text-align: center; margin-top: 5px;"></div>
-        <button class="next-btn" onclick="nextStep(3)">ДО ГРИ ➔</button>
+        <p>Поруш рівновагу (натисни на загрозу):</p>
+        <button class="hazard-btn" onclick="showSim('⚠️ ЗСУВ! Літосфера не витримала, парк сповзає в море.')">🪓 Вирубати дерева на схилах</button>
+        <button class="hazard-btn" onclick="showSim('⚠️ СПЕКА! Атмосфера стала сухою, дихати важко.')">🏗️ Забудувати все узбережжя бетоном</button>
+        
+        <div id="sim-info" style="color: var(--ai-glow); font-size: 0.9rem; text-align: center; margin: 10px 0; min-height: 40px; font-weight: bold;"></div>
+        
+        <button class="next-btn" onclick="nextStep(3)">ПЕРЕЙТИ ДО МІСІЇ ➔</button>
     </section>
 
     <section id="step3" class="lesson-step">
         <div class="step-tag">3. МІСІЯ</div>
-        <h2>🎲 Випадковий сценарій</h2>
-        <button onclick="playGame()" style="background: var(--game-color); width: 100%;" class="next-btn">ОТРИМАТИ ЗАВДАННЯ</button>
+        <h2>🎲 Виклик для еколога</h2>
+        <p>Натисни кнопку, щоб отримати еко-завдання для нашого ПРК.</p>
+        <button onclick="playGame()" style="background: var(--game-color); width: 100%;" class="next-btn">ГЕНЕРУВАТИ ЗАВДАННЯ</button>
         
         <div id="game-display" class="game-card" style="display: none; margin-top: 15px;">
             <h3 id="g-title" style="margin: 0; color: var(--game-color);"></h3>
             <p id="g-desc" style="font-size: 0.9rem;"></p>
-            <button onclick="document.getElementById('h-box').style.display='block'" style="font-size: 0.7rem; background: #00d2ff; border:none; padding: 5px; border-radius: 5px;">💡 Підказка</button>
+            <button onclick="document.getElementById('h-box').style.display='block'" style="font-size: 0.7rem; background: var(--accent); color: black; border:none; padding: 8px; border-radius: 5px; font-weight: bold;">💡 ПІДКАЗКА ВІД ВЧИТЕЛЯ</button>
             <div id="h-box" class="hint-box"></div>
         </div>
-        <button class="next-btn" onclick="nextStep(4)">СПИТАТИ МОРЕ ➔</button>
+        <button class="next-btn" onclick="nextStep(4)">ЗАПИТАТИ ПОРАДУ В МОРЯ ➔</button>
     </section>
 
     <section id="step4" class="lesson-step">
         <div class="step-tag">4. ЧАТ</div>
-        <h2>Розмова з Духом Моря</h2>
+        <h2>Діалог з Духом Моря</h2>
+        <p>Обери питання, яке тебе найбільше турбує:</p>
         <select id="q">
-            <option value="1">Чому ти — система?</option>
-            <option value="2">Що буде через 50 років?</option>
+            <option value="1">Чому Чорноморськ називають "комплексом"?</option>
+            <option value="2">Як врятувати наші схили від руйнування?</option>
+            <option value="3">Чи правда, що море вміє лікувати?</option>
         </select>
         <button class="next-btn" onclick="askSea()">ОТРИМАТИ ВІДПОВІДЬ</button>
-        <div id="ans" style="margin-top: 10px; font-style: italic; font-size: 0.9rem; color: var(--ai-glow);"></div>
-        <button class="next-btn" onclick="nextStep(5)">ФІНАЛ ➔</button>
+        <div id="ans" style="margin-top: 15px; padding: 10px; border-radius: 10px; background: rgba(0,0,0,0.3); font-style: italic; font-size: 0.95rem; color: var(--ai-glow);"></div>
+        <button class="next-btn" onclick="nextStep(5)">ЗАВЕРШИТИ ДОСЛІДЖЕННЯ ➔</button>
     </section>
 
     <section id="step5" class="lesson-step">
         <div class="step-tag">5. ФІНАЛ</div>
         <h2>Рефлексія 3-2-1</h2>
-        <p>Які <b>3</b> речі ти дізнався? <br>Які <b>2</b> загрози побачив? <br>Яке <b>1</b> рішення маєш?</p>
-        <button class="next-btn" onclick="location.reload()" style="background: white;">ПОЧАТИ СПОЧАТКУ</button>
+        <p><b>3</b> нові терміни, які ти запам'ятав. <br><b>2</b> зв'язки в ПРК нашого міста. <br><b>1</b> твоя обіцянка природі.</p>
+        <button class="next-btn" onclick="location.reload()" style="background: white; color: black;">Пройти квест ще раз</button>
     </section>
 
 </div>
@@ -185,7 +205,9 @@
 <script>
     function nextStep(num) {
         document.getElementById('step' + num).classList.add('step-visible');
-        window.scrollTo({ top: document.getElementById('step' + num).offsetTop - 20, behavior: 'smooth' });
+        setTimeout(() => {
+            window.scrollTo({ top: document.getElementById('step' + num).offsetTop - 20, behavior: 'smooth' });
+        }, 100);
     }
 
     function showSim(txt) {
@@ -194,8 +216,9 @@
 
     function playGame() {
         const scenarios = [
-            {t: "🌩️ Шторм", d: "Хвилі руйнують берег. Чому дерева (Біосфера) — це порятунок?", h: "Коріння тримає глину як сітка."},
-            {t: "🏨 Готель", d: "Бетон закрив морський вітер. Що зміниться?", h: "Атмосфера не принесе прохолоду, буде спека."}
+            {t: "🌩️ Загроза шторму", d: "Хвилі б'ють по глині. Яка сфера має прийти на допомогу Гідросфері, щоб врятувати місто?", h: "Біосфера! Коріння дерев тримає землю як арматура."},
+            {t: "🏭 Промисловий виклик", d: "Порт працює активно, але чи не шкодить він воді? Як це вплине на нас?", h: "Це зв'язок ПРК: порт дає роботу (ресурс), але вимагає захисту екології."},
+            {t: "🏖️ Чистий пісок", d: "Туристи залишили сміття. Який компонент ПРК постраждає першим?", h: "Біосфера (тварини) та Гідросфера (вода стане брудною)."}
         ];
         const s = scenarios[Math.floor(Math.random()*scenarios.length)];
         document.getElementById('game-display').style.display = 'block';
@@ -207,8 +230,11 @@
 
     function askSea() {
         const val = document.getElementById('q').value;
-        const a = (val == "1") ? "Я як людина: хвилі - кров, вітер - подих." : "Якщо берегти дерева, я буду твоїм другом сотні років!";
-        document.getElementById('ans').innerText = "Дух Моря: " + a;
+        let a = "";
+        if(val == "1") a = "Тому що я, повітря, земля і ви — одна команда. Зміниш одне — зміниться все!";
+        if(val == "2") a = "Садіть дерева (Біосфера). Їхнє коріння — це мої найкращі друзі, вони зупиняють зсуви.";
+        if(val == "3") a = "Так! Моя сіль в повітрі та вода лікують ваші легені. Це дар нашого ПРК.";
+        document.getElementById('ans').innerHTML = "<b>Дух Моря:</b> " + a;
     }
 </script>
 
