@@ -89,24 +89,38 @@
             box-shadow: 0 4px 10px rgba(0, 255, 136, 0.3);
         }
 
-        .map-visual {
-            position: relative; height: 250px; 
-            background: url('https://images.unsplash.com/photo-1518113259039-383679808603?auto=format&fit=crop&w=600&q=80') center/cover;
-            border-radius: 15px; margin-bottom: 15px; border: 2px solid var(--accent);
+        .map-container {
+            margin-bottom: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid var(--accent);
+            background: #000;
+            height: 300px;
         }
-        .poi {
-            position: absolute; width: 44px; height: 44px; background: var(--ai-glow); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-            box-shadow: 0 0 15px var(--ai-glow);
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
         }
 
         .hazard-btn {
-            background: rgba(255, 75, 43, 0.1); border: 1px solid var(--danger); color: white;
-            padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 8px; font-size: 0.9rem;
+            background: rgba(255, 75, 43, 0.1);
+            border: 1px solid var(--danger);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            width: 100%;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
         }
 
         .game-card {
-            background: rgba(0,0,0,0.6); padding: 15px; border-radius: 15px; border: 2px solid var(--game-color);
+            background: rgba(0,0,0,0.6);
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid var(--game-color);
         }
         .hint-box { display: none; background: #fff3a3; color: #333; padding: 10px; border-radius: 10px; margin-top: 10px; font-size: 0.85rem; }
 
@@ -125,7 +139,7 @@
 <div class="hub-container">
 
     <div class="qr-access-box">
-        <img src="qr-code.png" alt="QR">
+        <img src="qr-code.png" alt="QR-код до місії">
         <p>📱 Твій ключ до місії</p>
     </div>
 
@@ -149,15 +163,21 @@
 
     <section id="step2" class="lesson-step">
         <div class="step-tag">2. ДОСЛІДЖЕННЯ</div>
-        <h2>Жива мапа зв'язків</h2>
-        <div class="map-visual">
-            <div class="poi" style="top: 20%; left: 15%;" onclick="alert('💧 Гідросфера: Море дарує нам вологу та сіль.')">💧</div>
-            <div class="poi" style="top: 60%; left: 40%;" onclick="alert('🪨 Літосфера: Наші глинисті схили тримають все місто.')">🪨</div>
-            <div class="poi" style="top: 30%; left: 70%;" onclick="alert('🌬️ Атмосфера: Морський бриз очищує повітря.')">🌬️</div>
+        <h2>Жива мапа Чорноморська</h2>
+        <!-- ІНТЕРАКТИВНА КАРТА GOOGLE MAPS (Чорноморськ, Україна) -->
+        <div class="map-container">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d21929.283907612545!2d30.63510614703911!3d46.29786390391813!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c497d0f15d5a2f%3A0x5887412cecbbd3f1!2z0KfQvtGA0L3QvtC80L7RgNGH0YHQuiwg0J7QtNC10YHRjNC60LAg0L7QsdC70LDRgdGC0Yw!5e0!3m2!1suk!2sua!4v1714320000000!5m2!1suk!2sua" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
         </div>
-        <p>Поруш рівновагу (натисни на загрозу):</p>
-        <button class="hazard-btn" onclick="showSim('⚠️ ЗСУВ! Літосфера не витримала, парк сповзає в море.')">🪓 Вирубати дерева на схилах</button>
-        <button class="hazard-btn" onclick="showSim('⚠️ СПЕКА! Атмосфера стала сухою, дихати важко.')">🏗️ Забудувати все узбережжя бетоном</button>
+        <p>🌍 <strong>Досліджуй карту:</strong> знайди море, порт, пляжі, зелені зони. Як вони пов’язані?</p>
+        
+        <p>⚠️ <strong>Як людина порушує рівновагу?</strong> Натисни на загрозу:</p>
+        <button class="hazard-btn" onclick="showSim('⚠️ ЗСУВ! Літосфера не витримала: через вирубку дерев ґрунт сповзає в море.')">🪓 Вирубати дерева на схилах</button>
+        <button class="hazard-btn" onclick="showSim('⚠️ СПЕКА! Атмосфера стала сухою: бетон нагрівається, вітер несе пил.')">🏗️ Забудувати все узбережжя бетоном</button>
         
         <div id="sim-info" style="color: var(--ai-glow); font-size: 0.9rem; text-align: center; margin: 10px 0; min-height: 40px; font-weight: bold;"></div>
         
@@ -204,7 +224,9 @@
 
 <script>
     function nextStep(num) {
+        // показати наступний крок
         document.getElementById('step' + num).classList.add('step-visible');
+        // плавно прокрутити до нього
         setTimeout(() => {
             window.scrollTo({ top: document.getElementById('step' + num).offsetTop - 20, behavior: 'smooth' });
         }, 100);
@@ -221,11 +243,13 @@
             {t: "🏖️ Чистий пісок", d: "Туристи залишили сміття. Який компонент ПРК постраждає першим?", h: "Біосфера (тварини) та Гідросфера (вода стане брудною)."}
         ];
         const s = scenarios[Math.floor(Math.random()*scenarios.length)];
-        document.getElementById('game-display').style.display = 'block';
+        const displayDiv = document.getElementById('game-display');
+        displayDiv.style.display = 'block';
         document.getElementById('g-title').innerText = s.t;
         document.getElementById('g-desc').innerText = s.d;
-        document.getElementById('h-box').innerText = s.h;
-        document.getElementById('h-box').style.display = 'none';
+        const hintDiv = document.getElementById('h-box');
+        hintDiv.innerText = s.h;
+        hintDiv.style.display = 'none';
     }
 
     function askSea() {
